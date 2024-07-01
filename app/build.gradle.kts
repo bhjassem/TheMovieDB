@@ -1,6 +1,9 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.ksp)
 }
@@ -8,6 +11,10 @@ plugins {
 android {
     namespace = "benhamida.jassem.themoviedb"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
+    buildFeatures {
+        compose = true
+    }
 
     defaultConfig {
         applicationId = "benhamida.jassem.themoviedb"
@@ -38,11 +45,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
     packaging {
         resources {
@@ -67,21 +71,17 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.hilt)
     implementation(libs.hilt.navigation.compose)
-    implementation(libs.androidx.media3.exoplayer.dash)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
     implementation(libs.androidx.paging)
     implementation(libs.androidx.paging.compose)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.media3.exoplayer)
-    implementation(libs.media3.ui)
-    implementation(libs.media3.common)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
-
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.io.http)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

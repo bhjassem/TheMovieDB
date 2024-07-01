@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -8,11 +10,22 @@ android {
     namespace = "benhamida.jassem.data"
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = libs.versions.min.sdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        val keystoreFile = project.rootProject.file("local.properties")
+        val properties = Properties()
+        properties.load(keystoreFile.inputStream())
+        buildConfigField("String", "TMDB_TOKEN", properties.getProperty("tmdb_token"))
+        buildConfigField("String", "ACCOUNT_ID", properties.getProperty("account_id"))
+        buildConfigField("String", "API_KEY", properties.getProperty("api_key"))
     }
 
     buildTypes {
@@ -48,6 +61,7 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshi.retrofit.converter)
     ksp(libs.moshi.codegen)
+    implementation(libs.gson)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
