@@ -7,7 +7,9 @@ import benhamida.jassem.domain.usecase.top_rated_movies.GetTopRatedMoviesUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,12 +19,10 @@ class HomeViewModel @Inject constructor(
     private val getMovieListUseCase: GetTopRatedMoviesUseCase
 ) : ViewModel() {
 
-    private val _topRatedMovieListState: MutableStateFlow<PagingData<Movie>> =
+    private val _topRatedMovieListState: MutableSharedFlow<PagingData<Movie>> =
         MutableStateFlow(value = PagingData.empty())
 
-
-    val topRatedMoviesListState: MutableStateFlow<PagingData<Movie>> get() = _topRatedMovieListState
-
+    val topRatedMoviesListState: SharedFlow<PagingData<Movie>> get() = _topRatedMovieListState
 
     init {
         viewModelScope.launch {
@@ -30,13 +30,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
     private suspend fun getTopRatedMovies() {
         getMovieListUseCase.invoke()
             .distinctUntilChanged()
             .cachedIn(viewModelScope)
             .collect { movieListPagedData ->
-                _topRatedMovieListState.value = movieListPagedData
+                _topRatedMovieListState.emit(movieListPagedData)
             }
     }
 }
